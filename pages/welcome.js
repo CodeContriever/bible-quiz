@@ -2,6 +2,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { useRouter } from 'next/router'
+import { useSession, getSession, signOut, signIn } from 'next-auth/react'
 
 import Row from '../components/Row'
 import Column from '../components/Column'
@@ -10,7 +11,9 @@ import Button from '../components/Button'
 import Stack from '../components/Stack'
 
 export default function Home() {
-  const router = useRouter()
+    const router = useRouter()
+  const { data: session, status } = useSession({required: true})
+  if (status === 'authenticated') {
   return (
     <div className={styles.container}>
       <Head>
@@ -29,20 +32,24 @@ export default function Home() {
               alt={"imageEight"}
             />
           </div>
+          <div 
+           className="absolute top-[71px] left-[600px] h-[auto] self-center mr-[0] mb-0 font-normal 2xl:ml-[10px] 3xl:ml-[12px] lg:ml-[7px] xl:ml-[8px] not-italic lg:text-[17px] xl:text-[19px] 2xl:text-[32px] 3xl:text-[26px] text-center text-white_A700 w-[auto]">
+            Welcome, {session.user.name}
+           </div>
 
           <span className={styles['text']}>
             <span>Bible Quiz</span>
           </span>
 
-          <Button
-            className=" absolute top-[100px] left-[1200px] h-[auto] self-center mr-0 mb-0 font-normal border border-solid border-[#015EBF] rounded-3xl not-italic lg:text-[17px] xl:text-[19px] 2xl:text-[22px] 3xl:text-[26px] text-blue_800 text-center w-[200px]"
+            <Button
+            className="absolute top-[71px] left-[1100px] h-[auto] self-center mr-[0] mb-0 font-normal bg-[#DD086C] text-[#ffffff] 2xl:ml-[10px] 3xl:ml-[12px] lg:ml-[7px] xl:ml-[8px] not-italic lg:text-[17px] xl:text-[19px] 2xl:text-[22px] 3xl:text-[26px] text-center text-white_A700 w-[200px] rounded-3xl"
             shape="RoundedBorder15"
             variant="OutlineBlue8001_2"
-            onClick={() => router.push('/signup')}>
-            Sign up
-          </Button> 
+            onClick={() => signOut()}>
+            Sign out
+          </Button>
+          
 
-          <div className={styles['hidden']}>
           <div className={styles['ellipse1']}>
             <Image
               src="/images/ellipse12172.png"
@@ -97,8 +104,6 @@ export default function Home() {
             />
           </div>
 
-          </div>
-
           <span className={styles['text06']}>
             <span>© Lighthouse. All rights reserved.</span>
           </span>
@@ -150,11 +155,11 @@ export default function Home() {
           </div>
 
           <Button
-          className={styles['btn_get_started']}
+            className={styles['btn_get_started']}
             shape="RoundedBorder24"
             size="xl"
             variant="OutlineBlue800"
-            onClick={() => router.push('/signin')}>
+            onClick={() => router.push('/join')}>
             Get Started
           </Button>
 
@@ -168,5 +173,24 @@ export default function Home() {
       </div>
 
     </div>
+    )
+} else {
+  return (
+    <div className="flex flex-col items-center justify-center font-opensans items-center mx-[auto] lg:p-[18px] xl:p-[21px] 2xl:p-[24px] 3xl:p-[28px] w-[100%] max-h-screen">
+      <Text className="font-semibold lg:text-[31px] xl:text-[35px] 2xl:text-[40px] 3xl:text-[48px] text-black_900 w-[auto]">
+        You are not signed in
+      </Text>
+
+      <Button
+        className="border-none rounded-none font-semibold bg-[#005EBF] text-[#ffffff] lg:mt-[24px] xl:mt-[28px] 2xl:mt-[32px] 3xl:mt-[38px] lg:text-[12px] xl:text-[14px] 2xl:text-2xl 3xl:text-[19px] text-center w-[50%]"
+        shape="RoundedBorder24"
+        size="lg"
+        variant="OutlineBlue800"
+        onClick={() => router.push('/signin')}>
+        Sign In
+      </Button>
+
+    </div>
   )
+}
 }
